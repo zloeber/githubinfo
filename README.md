@@ -16,3 +16,7 @@ $ ./bin/githubinfo
 ### Testing
 
 ``make test``
+
+### Credits
+
+[cookiecutter-golang](https://github.com/lacion/cookiecutter-golang "Cookiecutter GoLang")

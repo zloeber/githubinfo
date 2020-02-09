@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -11,14 +10,10 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "generated code example",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "githubinfo zloeber/githubinfo",
+	Short: "Gather and return information about a github project via the github api without a token.",
+	Long: `Sometimes one needs information about another github project. In these cases you can scrape the api
+	with curl and bash scripts or use this simple utility to do the same.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//      Run: func(cmd *cobra.Command, args []string) { },
