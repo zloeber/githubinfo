@@ -14,7 +14,7 @@ var getCmd = &cobra.Command{
 		if len(args) < 1 {
 		  return errors.New("requires a vendor/repo argument")
 		}
-		if lib.isValidProject(args[0]) {
+		if lib.IsValidProject(args[0]) {
 		  return nil
 		}
 		return fmt.Errorf("Invalid Github project specified: %s", args[0])
