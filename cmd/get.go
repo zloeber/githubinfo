@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"src/githubinfolib"
+	"github.com/zloeber/githubinfo/lib"
 )
 
 // versionCmd represents the version command
@@ -14,7 +14,7 @@ var getCmd = &cobra.Command{
 		if len(args) < 1 {
 		  return errors.New("requires a vendor/repo argument")
 		}
-		if githubinfo.isValidProject(args[0]) {
+		if lib.isValidProject(args[0]) {
 		  return nil
 		}
 		return fmt.Errorf("Invalid Github project specified: %s", args[0])
