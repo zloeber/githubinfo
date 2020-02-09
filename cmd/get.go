@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/zloeber/githubinfo/lib"
+	"github.com/zloeber/githubinfo/githubinfo"
 )
 
-// versionCmd represents the version command
+// getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get project information.",

@@ -2,7 +2,6 @@ package log
 
 import (
 	"os"
-
 	"github.com/sirupsen/logrus"
 	"github.com/zloeber/githubinfo/config"
 )
