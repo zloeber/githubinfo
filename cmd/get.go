@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/zloeber/githubinfo/githubinfo"
+	"github.com/zloeber/githubinfo/log"
 )
 
 // getCmd represents the get command
@@ -15,13 +16,20 @@ var getCmd = &cobra.Command{
 		if len(args) < 1 {
 		  return errors.New("requires a vendor/repo argument")
 		}
-		if lib.IsValidProject(args[0]) {
+		if githubinfo.IsValidProject(args[0]) {
 		  return nil
 		}
 		return fmt.Errorf("Invalid Github project specified: %s", args[0])
 	  },
 	  Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Input: ", args[0])
+		projectJSON := string(githubinfo.ParseForJSON(args[0]))
+		if !githubinfo.IsJSON(projectJSON) {
+			log.Error("Cannot parse for json, possibly not online?")
+		} else {
+			fmt.Println("Project: ", args[0])
+			fmt.Println("Description: ", githubinfo.Description(projectJSON))
+			fmt.Println("License: ", githubinfo.License(projectJSON))
+		}
 	  },
 }
 
