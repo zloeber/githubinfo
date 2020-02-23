@@ -20,12 +20,12 @@ var getCmd = &cobra.Command{
 		if githubinfo.IsValidProject(args[0]) {
 			return nil
 		}
-		return fmt.Errorf("Invalid Github project specified: %s", args[0])
+		return fmt.Errorf("invalid Github project specified: %s", args[0])
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		projectJSON := string(githubinfo.ProjectJSON(args[0]))
 		if !githubinfo.IsJSON(projectJSON) {
-			log.Error("Cannot parse for json, possibly not online?")
+			log.Error("cannot parse for json, possibly not online?")
 		} else {
 			fmt.Println("Project: ", args[0])
 			fmt.Println("Description: ", githubinfo.Description(projectJSON))

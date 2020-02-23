@@ -20,13 +20,13 @@ var releasesCmd = &cobra.Command{
 		if githubinfo.IsValidProject(args[0]) {
 			return nil
 		}
-		return fmt.Errorf("Invalid Github project specified: %s", args[0])
+		return fmt.Errorf("invalid Github project specified: %s", args[0])
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		releasesJSON := string(githubinfo.ReleasesJSON(args[0]))
 		releases := githubinfo.ReleaseURLs(releasesJSON)
 		if !githubinfo.IsJSON(releasesJSON) {
-			log.Error("Cannot parse for json, possibly not online?")
+			log.Error("cannot parse for json, possibly not online?")
 		} else {
 			fmt.Println("Project: ", args[0])
 			fmt.Println("JSON: ", releases)

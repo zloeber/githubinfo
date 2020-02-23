@@ -3,10 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+
 	"github.com/spf13/cobra"
 )
 
-var cfgFile string
+//var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -28,6 +29,7 @@ func Execute() {
 	}
 }
 
+// init gets this thing started
 func init() {
 	cobra.OnInitialize()
 
