@@ -13,7 +13,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOOS: linux
         GOARCH: amd64
-        GO111MODULE: auto
     - name: osx build
       uses: shoukoo/golang-pipeline/go1.13/release@master
       if: github.event.action == 'published'
@@ -21,7 +20,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOOS: darwin
         GOARCH: amd64
-        GO111MODULE: auto
     - name: windows build
       uses: shoukoo/golang-pipeline/go1.13/release@master
       if: github.event.action == 'published'
@@ -29,4 +27,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOOS: windows
         GOARCH: amd64
-        GO111MODULE: auto
