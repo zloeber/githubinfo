@@ -23,9 +23,3 @@ jobs:
           args: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # Attach Go binaries to GitHub Release
-      - name: 'GitHub Release'
-        uses: cloudposse/actions/github/release-assets@0.2.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_PATH: ${{ github.workspace }}/dist/githubinfo_*
