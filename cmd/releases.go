@@ -8,10 +8,10 @@ import (
 	"github.com/zloeber/githubinfo/log"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get project information.",
+// releasesCmd represents the get command
+var releasesCmd = &cobra.Command{
+	Use:   "releases",
+	Short: "Github releases information.",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 		  return errors.New("requires a vendor/repo argument")
@@ -22,17 +22,17 @@ var getCmd = &cobra.Command{
 		return fmt.Errorf("Invalid Github project specified: %s", args[0])
 	  },
 	  Run: func(cmd *cobra.Command, args []string) {
-		projectJSON := string(githubinfo.ProjectJSON(args[0]))
-		if !githubinfo.IsJSON(projectJSON) {
+		releasesJSON := string(githubinfo.ReleasesJSON(args[0]))
+		releases := githubinfo.ReleaseURLs(releasesJSON)
+		if !githubinfo.IsJSON(releasesJSON) {
 			log.Error("Cannot parse for json, possibly not online?")
 		} else {
 			fmt.Println("Project: ", args[0])
-			fmt.Println("Description: ", githubinfo.Description(projectJSON))
-			fmt.Println("License: ", githubinfo.License(projectJSON))
+			fmt.Println("JSON: ", releases)
 		}
 	  },
 }
 
 func init() {
-	rootCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(releasesCmd)
 }

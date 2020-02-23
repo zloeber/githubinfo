@@ -12,8 +12,8 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "githubinfo zloeber/githubinfo",
 	Short: "Gather and return information about a github project via the github api without a token.",
-	Long: `Sometimes one needs information about another github project. In these cases you can scrape the api
-	with curl and bash scripts or use this simple utility to do the same.`,
+	Long: `Sometimes one needs information about another github project. In these cases, one can scrape the api
+	with curl and bash scripts or just use this simple utility to do the same.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//      Run: func(cmd *cobra.Command, args []string) { },
