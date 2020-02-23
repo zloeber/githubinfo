@@ -14,7 +14,7 @@ import (
 var projectPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$`)
 var githubAPI = "https://api.github.com/repos"
 
-// Is the string a valid github vendor/repo combination
+// IsValidProject determines if the string is a valid github vendor/repo combination
 func IsValidProject(str string) bool {
 	if !projectPattern.MatchString(str) {
 		log.Error(fmt.Sprintf("%s does not match the format for a project - vendor/repo!", str))
@@ -23,7 +23,7 @@ func IsValidProject(str string) bool {
 	return true
 }
 
-// Parse github site for full project information
+// ProjectJSON will parse github site for full project information
 func ProjectJSON(project string) string {
 	response, err := http.Get(fmt.Sprintf("%s/%s", githubAPI, project))
 	if err != nil {
@@ -39,7 +39,7 @@ func ProjectJSON(project string) string {
 	return string(contents)
 }
 
-// Parse github site for release
+// ReleasesJSON will parse github site for release
 func ReleasesJSON(project string) string {
 	response, err := http.Get(fmt.Sprintf("%s/%s/releases/latest", githubAPI, project))
 	if err != nil {
@@ -55,14 +55,14 @@ func ReleasesJSON(project string) string {
 	return string(contents)
 }
 
-// Parse for project description
+// Description will parse for project description
 func Description(payload string) string {
 	var result map[string]interface{}
 	json.Unmarshal([]byte(payload), &result)
 	return result["description"].(string)
 }
 
-// Parse for project license
+// License will parse for project license
 func License(payload string) string {
 	license := "None Assigned"
 	var result map[string]interface{}
@@ -74,7 +74,7 @@ func License(payload string) string {
 	return string(license)
 }
 
-// Parse for project license
+// ReleaseURLs will parse for project license
 func ReleaseURLs(payload string) []string {
 	var URLs []string
 	var result map[string]interface{}
@@ -89,7 +89,7 @@ func ReleaseURLs(payload string) []string {
 	return URLs
 }
 
-// Is the string json
+// IsJSON will determine if the string is valid json
 func IsJSON(str string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(str), &js) == nil
