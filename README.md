@@ -8,14 +8,10 @@ This project requires Go to be installed. On OS X with Homebrew you can just run
 
 Running it then should be as simple as:
 
-```console
-$ make
-$ ./bin/githubinfo
+```bash
+make build
+./bin/githubinfo
 ```
-
-### Testing
-
-``make test``
 
 ### Credits
 
