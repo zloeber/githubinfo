@@ -3,6 +3,7 @@ package githubinfo
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -30,7 +31,8 @@ func ProjectJSON(project string) string {
 		log.Error(fmt.Sprintf("%s", err))
 		os.Exit(1)
 	}
-	defer response.Body.Close()
+	//defer response.Body.Close()
+	defer CloseQuietly(response.Body)
 	contents, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Error(fmt.Sprintf("%s", err))
@@ -46,7 +48,8 @@ func ReleasesJSON(project string) string {
 		log.Error(fmt.Sprintf("%s", err))
 		os.Exit(1)
 	}
-	defer response.Body.Close()
+	//defer response.Body.Close()
+	defer CloseQuietly(response.Body)
 	contents, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Error(fmt.Sprintf("%s", err))
@@ -58,7 +61,12 @@ func ReleasesJSON(project string) string {
 // Description will parse for project description
 func Description(payload string) string {
 	var result map[string]interface{}
-	json.Unmarshal([]byte(payload), &result)
+	bytes := []byte(payload)
+	err := json.Unmarshal(bytes, &result)
+	if err != nil {
+		log.Error(fmt.Sprintf("%s", err))
+		os.Exit(1)
+	}
 	return result["description"].(string)
 }
 
@@ -66,7 +74,12 @@ func Description(payload string) string {
 func License(payload string) string {
 	license := "None Assigned"
 	var result map[string]interface{}
-	json.Unmarshal([]byte(payload), &result)
+	bytes := []byte(payload)
+	err := json.Unmarshal(bytes, &result)
+	if err != nil {
+		log.Error(fmt.Sprintf("%s", err))
+		os.Exit(1)
+	}
 	if result["license"] != nil {
 		licenseMap := result["license"].(map[string]interface{})
 		license = licenseMap["spdx_id"].(string)
@@ -78,7 +91,12 @@ func License(payload string) string {
 func ReleaseURLs(payload string) []string {
 	var URLs []string
 	var result map[string]interface{}
-	json.Unmarshal([]byte(payload), &result)
+	bytes := []byte(payload)
+	err := json.Unmarshal(bytes, &result)
+	if err != nil {
+		log.Error(fmt.Sprintf("%s", err))
+		os.Exit(1)
+	}
 	if result["assets"] != nil {
 		assets := result["assets"].([]interface{})
 		for _, asset := range assets {
@@ -93,4 +111,12 @@ func ReleaseURLs(payload string) []string {
 func IsJSON(str string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(str), &js) == nil
+}
+
+// CloseQuietly closes `io.Closer` quietly. Very handy and helpful for code
+// quality too.
+func CloseQuietly(v interface{}) {
+	if d, ok := v.(io.Closer); ok {
+		_ = d.Close()
+	}
 }
