@@ -30,18 +30,19 @@ build: deps ## Compile the project.
 
 .PHONY: build-alpine
 build-alpine: ## Compile optimized for alpine linux.
-	@echo "building ${BIN_NAME} ${VERSION}"
-	@echo "GOPATH=${GOPATH}"
-	go build -ldflags '-w -linkmode external -extldflags "-static" -X github.com/zloeber/githubinfo/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/zloeber/githubinfo/version.BuildDate=${BUILD_DATE}' -o bin/${BIN_NAME}
+	go build \
+		-ldflags '-w -linkmode external -extldflags "-static" $(LDFLAGS)' \
+		-o bin/${BIN_NAME}
 
-.PHONY: package
-package: ## Build final docker image with just the go binary inside
-	@echo "building image ${BIN_NAME} ${VERSION} $(GIT_COMMIT)"
-	docker build --build-arg VERSION=${VERSION} --build-arg GIT_COMMIT=$(GIT_COMMIT) -t $(IMAGE_NAME):local .
+.PHONY: image
+image: ## Build docker image
+	docker build \
+		--build-arg VERSION=${VERSION} \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(IMAGE_NAME):local .
 
 .PHONY: tag
-tag: ## Tag image created by package with latest, git commit and version
-	@echo "Tagging: latest ${VERSION} $(GIT_COMMIT)"
+tag: ## Tag docker image
 	docker tag $(IMAGE_NAME):local $(IMAGE_NAME):$(GIT_COMMIT)
 	docker tag $(IMAGE_NAME):local $(IMAGE_NAME):${VERSION}
 	docker tag $(IMAGE_NAME):local $(IMAGE_NAME):latest
