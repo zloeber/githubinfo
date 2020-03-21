@@ -1,0 +1,29 @@
+name: Test
+
+on: push
+
+jobs:
+  initialize:
+    name: initialize
+    runs-on: ubuntu-latest
+    steps:
+    - name: repo-checkout
+      uses: actions/checkout@master
+    - name: asdf-install
+      uses: asdf-vm/actions/setup
+    - name: asdf-tools
+      uses: asdf-vm/actions/install@v1.0.0
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    needs: initialize
+    steps:
+    - name: lint
+      uses: shoukoo/golang-pipeline/go1.13/linter@master
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    needs: [initialize, lint]
+    steps:
+    - name: test
+      uses: shoukoo/golang-pipeline/go1.13/test@master

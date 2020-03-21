@@ -1,74 +1,78 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: build build-alpine clean test help default
+
+## Modify these for your project
+VENDOR := zloeber
+APP := githubinfo
+IMAGE_NAME := $(VENDOR)/$(APP)
+REPO := github.com/$(VENDOR)/$(APP)
 
 SRCS := $(shell find . -name '*.go')
+GO_VERSION := $(shell cat ./.tool-versions | grep golang | cut -f 2 -d " ")
+VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"$$/\1/')
+GIT_COMMIT := $(shell git rev-parse HEAD)
+GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
+BUILD_DATE := $(shell date '+%Y-%m-%d-%H:%M:%S')
+LDFLAGS := -X $(REPO)/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/version.BuildDate=${BUILD_DATE}
 LINTERS := \
 	golang.org/x/lint/golint \
 	github.com/kisielk/errcheck \
 	honnef.co/go/tools/cmd/staticcheck
 
-BIN_NAME := githubinfo
-VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"$$/\1/')
-GIT_COMMIT := $(shell git rev-parse HEAD)
-GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
-BUILD_DATE := $(shell date '+%Y-%m-%d-%H:%M:%S')
-IMAGE_NAME := "zloeber/githubinfo"
-LDFLAGS := -X github.com/zloeber/githubinfo/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X github.com/zloeber/githubinfo/version.BuildDate=${BUILD_DATE}
-
 .PHONY: help
 help: ## Help
-	@grep --no-filename -E '^[a-zA-Z_/-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep --no-filename -E '^[a-zA-Z_%/-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: build
-build: deps ## Compile the project.
-	@echo "building ${BIN_NAME} ${VERSION}"
-	@echo "GOPATH=${GOPATH}"
-	go build -v \
-		-ldflags "$(LDFLAGS)" \
-		-o bin/${BIN_NAME}
+build: deps mod/tidy ## Compile the project.
+	go build -v -ldflags "$(LDFLAGS)" -o bin/${APP}
 
-.PHONY: build-alpine
-build-alpine: ## Compile optimized for alpine linux.
-	go build \
-		-ldflags '-w -linkmode external -extldflags "-static" $(LDFLAGS)' \
-		-o bin/${BIN_NAME}
 
-.PHONY: image
-image: ## Build docker image
+.PHONY: docker/image
+docker/image: mod/tidy ## Build docker image
 	docker build \
-		--build-arg VERSION=${VERSION} \
+		--build-arg VERSION=$(VERSION) \
 		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		--build-arg GO_VERSION=$(GO_VERSION) \
+		--build-arg LDFLAGS="$(LDFLAGS)" \
 		-t $(IMAGE_NAME):local .
 
-.PHONY: tag
-tag: ## Tag docker image
+.PHONY: docker/tag
+docker/tag: ## Tag docker image
 	docker tag $(IMAGE_NAME):local $(IMAGE_NAME):$(GIT_COMMIT)
 	docker tag $(IMAGE_NAME):local $(IMAGE_NAME):${VERSION}
 	docker tag $(IMAGE_NAME):local $(IMAGE_NAME):latest
 
-.PHONY: push
-push: tag  ## Push tagged images to registry
+.PHONY: docker/push
+docker/push: docker/tag  ## Push tagged images to registry
 	@echo "Pushing docker image to registry: latest ${VERSION} $(GIT_COMMIT)"
 	docker push $(IMAGE_NAME):$(GIT_COMMIT)
 	docker push $(IMAGE_NAME):${VERSION}
 	docker push $(IMAGE_NAME):latest
 
+.PHONY: docker/run
+docker/run: ## Run a local docker image for the app
+	docker run -i -t --rm --name=$(APP) $(IMAGE_NAME):local
+
 .PHONY: deps
 deps: ## Install dependencies
 	go get -d -v ./...
 
-.PHONY: updatedeps
-updatedeps: ## Update dependencies
+.PHONY: deps/update
+deps/update: ## Update dependencies
 	go get -d -v -u -f ./...
 
-.PHONY: testdeps
-testdeps: ## Install test deps
+.PHONY: mod/tidy
+mod/tidy: ## Update module dependencies
+	go mod tidy
+
+.PHONY: test/deps
+test/deps: ## Install test deps
 	go get -d -v -t ./...
 	go get -v $(LINTERS)
 
-.PHONY: updatetestdeps
-updatetestdeps: ## Update test deps
+.PHONY: test/deps/update
+test/deps/update: ## Update test deps
 	go get -d -v -t -u -f ./...
 	go get -u -v $(LINTERS)
 
@@ -77,7 +81,7 @@ install: deps ## Install
 	go install ./...
 
 .PHONY: golint
-golint: testdeps ## Code linting
+golint: test/deps ## Code linting
 	for file in $(SRCS); do \
 		golint $${file}; \
 		if [ -n "$$(golint $${file})" ]; then \
@@ -86,29 +90,42 @@ golint: testdeps ## Code linting
 	done
 
 .PHONY: vet
-vet: testdeps ## Code vetting
+vet: test/deps ## Code vetting
 	go vet ./...
 
-.PHONY: testdeps
-errcheck: testdeps ## Error checking
+.PHONY: test/deps
+errcheck: test/deps ## Error checking
 	errcheck ./...
 
 .PHONY: staticcheck
-staticcheck: testdeps ## Static testing
+staticcheck: test/deps ## Static testing
 	staticcheck ./...
 
 .PHONY: lint
-lint: golint vet errcheck staticcheck ## Lint the project
+lint: golint vet errcheck staticcheck ## Lint, vet, errcheck, and staticcheck
 
 .PHONY: version
 version: ## Go version
 	@go version
 
 .PHONY: test
-test: testdeps lint ## Run tests
+test: test/deps lint ## Run tests
 	go test -race ./..
 
 .PHONY: clean
 clean: ## Clean the directory tree.
 	go clean -i ./...
-	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
+	@test ! -e bin/${APP} || rm bin/${APP}
+
+.PHONY: show
+show: ## Show various build settings
+	@echo "VENDOR: $(VENDOR)"
+	@echo "APP: $(APP)"
+	@echo "IMAGE_NAME: $(IMAGE_NAME)"
+	@echo "REPO: $(REPO)"
+	@echo "GO_VERSION: $(GO_VERSION)"
+	@echo "VERSION: $(VERSION)"
+	@echo "GIT_COMMIT: $(GIT_COMMIT)"
+	@echo "GIT_DIRTY: $(GIT_DIRTY)"
+	@echo "BUILD_DATE: $(BUILD_DATE)"
+	@echo "LDFLAGS: $(LDFLAGS)"
