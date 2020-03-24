@@ -2,10 +2,10 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 ## Modify these for your project
-VENDOR := zloeber
-APP := githubinfo
-IMAGE_NAME := $(VENDOR)/$(APP)
-REPO := github.com/$(VENDOR)/$(APP)
+VENDOR ?= zloeber
+APP ?= githubinfo
+IMAGE_NAME ?= $(VENDOR)/$(APP)
+REPO ?= github.com/$(VENDOR)/$(APP)
 
 SRCS := $(shell find . -name '*.go')
 GO_VERSION := $(shell cat ./.tool-versions | grep golang | cut -f 2 -d " ")
@@ -18,6 +18,9 @@ LINTERS := \
 	golang.org/x/lint/golint \
 	github.com/kisielk/errcheck \
 	honnef.co/go/tools/cmd/staticcheck
+
+HELPERAPPS := \
+	github.com/spf13/cobra/cobra
 
 .PHONY: help
 help: ## Help
@@ -57,6 +60,8 @@ docker/run: ## Run a local docker image for the app
 .PHONY: deps
 deps: ## Install dependencies
 	go get -d -v ./...
+	go get -v -u $(HELPERAPPS)
+
 
 .PHONY: deps/update
 deps/update: ## Update dependencies
@@ -69,7 +74,7 @@ mod/tidy: ## Update module dependencies
 .PHONY: test/deps
 test/deps: ## Install test deps
 	go get -d -v -t ./...
-	go get -v $(LINTERS)
+	go get -v -u $(LINTERS)
 
 .PHONY: test/deps/update
 test/deps/update: ## Update test deps
