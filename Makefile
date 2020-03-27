@@ -11,6 +11,7 @@ SRCS := $(shell find . -name '*.go')
 GO_VERSION := $(shell cat ./.tool-versions | grep golang | cut -f 2 -d " ")
 VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"$$/\1/')
 GIT_COMMIT := $(shell git rev-parse HEAD)
+RELEASE_VERSION ?= $(VERSION)-$(GIT_COMMIT)
 GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE := $(shell date '+%Y-%m-%d-%H:%M:%S')
 LDFLAGS := -X $(REPO)/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/version.BuildDate=${BUILD_DATE}
@@ -29,7 +30,6 @@ help: ## Help
 .PHONY: build
 build: deps mod/tidy ## Compile the project.
 	go build -v -ldflags "$(LDFLAGS)" -o bin/${APP}
-
 
 .PHONY: docker/image
 docker/image: mod/tidy ## Build docker image
@@ -133,4 +133,12 @@ show: ## Show various build settings
 	@echo "GIT_COMMIT: $(GIT_COMMIT)"
 	@echo "GIT_DIRTY: $(GIT_DIRTY)"
 	@echo "BUILD_DATE: $(BUILD_DATE)"
+	@echo "RELEASE_VERSION: $(RELEASE_VERSION)"
 	@echo "LDFLAGS: $(LDFLAGS)"
+
+.PHONY: release
+release:
+	git add -all .
+	git commit -m "release: commit before release"
+	git tag -a v$(RELEASE_VERSION) -m "auto-release"
+	git push origin master --tags

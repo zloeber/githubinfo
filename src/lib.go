@@ -12,8 +12,10 @@ import (
 	"github.com/zloeber/githubinfo/log"
 )
 
-var projectPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$`)
-var githubAPI = "https://api.github.com/repos"
+var (
+	projectPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$`)
+	githubAPI      = "https://api.github.com/repos"
+)
 
 // IsValidProject determines if the string is a valid github vendor/repo combination
 func IsValidProject(str string) bool {
@@ -31,7 +33,6 @@ func ProjectJSON(project string) string {
 		log.Error(fmt.Sprintf("%s", err))
 		os.Exit(1)
 	}
-	//defer response.Body.Close()
 	defer CloseQuietly(response.Body)
 	contents, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -114,7 +115,7 @@ func IsJSON(str string) bool {
 }
 
 // CloseQuietly closes `io.Closer` quietly. Very handy and helpful for code
-// quality too.
+// quality coverage testing (but not readability).
 func CloseQuietly(v interface{}) {
 	if d, ok := v.(io.Closer); ok {
 		_ = d.Close()
