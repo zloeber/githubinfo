@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -35,15 +36,15 @@ func Execute() {
 	}
 }
 
-// func initConfig() {
-// 	if err := config.LoadConfigProvider("GITHUBINFO"); err != nil {
-// 		log.Fatalf("Error reading config file, %s", err)
-// 	}
-// }
+func initConfig() {
+	if err := config.LoadConfigProvider("GITHUBINFO"); err != nil {
+		log.Fatalf("Error reading config file, %s", err)
+	}
+}
 
 // init gets this thing started
 func init() {
-	cobra.OnInitialize(config.LoadConfigProvider("GITHUBINFO"))
+	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", config.Config().GetBool("verbose"), "verbose output")
 	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is config.yml)")
 	rootCmd.PersistentFlags().String("config", os.ExpandEnv("./.config.yml"), "config file (default is config.yml)")
