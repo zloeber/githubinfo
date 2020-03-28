@@ -1,4 +1,4 @@
-package githubinfo
+package api
 
 import (
 	"reflect"

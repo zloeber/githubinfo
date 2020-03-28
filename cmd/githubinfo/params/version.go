@@ -1,9 +1,9 @@
-package cmd
+package params
 
 import (
 	"fmt"
-	"github.com/zloeber/githubinfo/version"
 	"github.com/spf13/cobra"
+	"github.com/zloeber/githubinfo/pkg/version"
 )
 
 // versionCmd represents the version command

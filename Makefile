@@ -9,7 +9,8 @@ REPO ?= github.com/$(VENDOR)/$(APP)
 
 SRCS := $(shell find . -name '*.go')
 GO_VERSION := $(shell cat ./.tool-versions | grep golang | cut -f 2 -d " ")
-VERSION := $(shell grep "const Version " version/version.go | sed -E 's/.*"(.+)"$$/\1/')
+VERSION := $(git describe --tags `git rev-list --tags --max-count=1`)
+#VERSION := $(shell grep "const Version " internal/version/version.go | sed -E 's/.*"(.+)"$$/\1/')
 GIT_COMMIT := $(shell git rev-parse HEAD)
 RELEASE_VERSION ?= $(VERSION)-$(GIT_COMMIT)
 GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
@@ -29,7 +30,7 @@ help: ## Help
 
 .PHONY: build
 build: deps mod/tidy ## Compile the project.
-	go build -v -ldflags "$(LDFLAGS)" -o bin/${APP}
+	go build -a -v -ldflags "$(LDFLAGS)" -o bin/${APP}
 
 .PHONY: docker/image
 docker/image: mod/tidy ## Build docker image

@@ -1,9 +1,9 @@
 package log
 
 import (
-	"os"
 	"github.com/sirupsen/logrus"
-	"github.com/zloeber/githubinfo/config"
+	"github.com/zloeber/githubinfo/pkg/config"
+	"os"
 )
 
 // Logger defines a set of methods for writing application logs. Derived from and
@@ -41,18 +41,15 @@ func init() {
 	defaultLogger = newLogrusLogger(config.Config())
 }
 
-
 // NewLogger returns a configured logrus instance
 func NewLogger(cfg config.Provider) *logrus.Logger {
 	return newLogrusLogger(cfg)
 }
 
-
-
 func newLogrusLogger(cfg config.Provider) *logrus.Logger {
 
 	l := logrus.New()
-	
+
 	if cfg.GetBool("json_logs") {
 		l.Formatter = new(logrus.JSONFormatter)
 	}
@@ -68,7 +65,7 @@ func newLogrusLogger(cfg config.Provider) *logrus.Logger {
 	default:
 		l.Level = logrus.DebugLevel
 	}
-	
+
 	return l
 }
 

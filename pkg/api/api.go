@@ -1,4 +1,4 @@
-package githubinfo
+package api
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/zloeber/githubinfo/log"
+	"github.com/zloeber/githubinfo/pkg/log"
 )
 
 var (

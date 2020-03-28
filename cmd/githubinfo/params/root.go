@@ -1,4 +1,4 @@
-package cmd
+package params
 
 import (
 	"fmt"
@@ -7,8 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/zloeber/githubinfo/config"
+	"github.com/zloeber/githubinfo/pkg/config"
 )
 
 var (
