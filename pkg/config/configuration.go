@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"github.com/zloeber/githubinfo/cmd/githubinfo/log"
+	"github.com/zloeber/githubinfo/pkg/log"
 )
 
 var defaultConfig *viper.Viper

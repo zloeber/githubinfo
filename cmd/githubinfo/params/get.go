@@ -1,4 +1,4 @@
-package params
+package main
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/zloeber/githubinfo/pkg/api"
-	"github.com/zloeber/githubinfo/pkg/log"
+	// "github.com/zloeber/githubinfo/pkg/log"
 )
 
 // getCmd represents the get command
