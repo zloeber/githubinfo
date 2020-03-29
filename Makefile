@@ -30,7 +30,7 @@ help: ## Help
 
 .PHONY: build
 build: deps mod/tidy ## Compile the project.
-	go build -a -v -ldflags "$(LDFLAGS)" -o bin/${APP} ./cmd/...
+	go build -v -ldflags "$(LDFLAGS)" -o bin ./cmd/...
 
 .PHONY: docker/image
 docker/image: mod/tidy ## Build docker image

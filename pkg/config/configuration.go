@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 	"time"
-
+	"os"
+	
 	"github.com/spf13/viper"
-	"github.com/zloeber/githubinfo/pkg/log"
 )
 
 var defaultConfig *viper.Viper
@@ -76,10 +76,12 @@ func readViperConfig(appName string) *viper.Viper {
 	if err := v.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", v.ConfigFileUsed())
 	} else {
-		log.Fatalf("Error reading config file, %s", err)
+		fmt.Println("Error reading config file, %s", err)
+       	os.Exit(1)
 	}
 	if err := v.Unmarshal(&configuration); err != nil {
-		log.Fatalf("Error unmarshalling config file, %s", err)
+		fmt.Println("Error unmarshalling config file, %s", err)
+       	os.Exit(1)
 	}
 
 	return v

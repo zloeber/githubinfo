@@ -1,10 +1,12 @@
-package main
+package params
 
 import (
 	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/zloeber/githubinfo/pkg/api"
+	"github.com/zloeber/githubinfo/pkg/log"
 )
 
 // releasesCmd represents the get command
