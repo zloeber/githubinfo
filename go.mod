@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/sirupsen/logrus v1.5.0
@@ -19,4 +20,4 @@ require (
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
-replace github.com/zloeber/githubinfo/cmd => ./cmd
+// replace github.com/zloeber/githubinfo/cmd => ./cmd
