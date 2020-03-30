@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"time"
 	"os"
-	
+	"strings"
+
 	"github.com/spf13/viper"
+	"github.com/zloeber/githubinfo/pkg/version"
 )
 
-var defaultConfig *viper.Viper
-var cfgFile string
+var (
+	defaultConfig *viper.Viper
+	cfgFile string
+)
 
 // Configuration for running this application
 type Configuration struct {
@@ -47,13 +51,6 @@ func LoadConfigProvider(appName string) Provider {
 	return readViperConfig(appName)
 }
 
-// // ConfigFile returns the current configuration file
-// func ConfigFile() string {
-// 	conffile := os.LookupEnv()().ExpandEnv("$HOME/.config"),
-// 		"Path to config file")
-// 	ConfigFile
-// }
-
 func readViperConfig(appName string) *viper.Viper {
 	v := viper.New()
 	v.SetEnvPrefix(appName)
@@ -89,5 +86,5 @@ func readViperConfig(appName string) *viper.Viper {
 
 // init this module
 func init() {
-	defaultConfig = readViperConfig("GITHUBINFO")
+	defaultConfig = readViperConfig(strings.ToUpper(version.AppName))
 }

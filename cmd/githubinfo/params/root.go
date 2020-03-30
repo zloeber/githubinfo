@@ -2,7 +2,7 @@ package params
 
 import (
 	"fmt"
-	"log"
+//	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -15,6 +15,9 @@ var (
 	cfgFile       string
 	verbose       bool
 	defaultConfig *viper.Viper
+
+	// App info
+	appName = "GITHUBINFO"
 	rootCmd       = &cobra.Command{
 		Use:   "githubinfo zloeber/githubinfo",
 		Short: "Gather and return information about a github project via the github api without a token.",
@@ -35,18 +38,18 @@ func Execute() {
 	}
 }
 
-func initConfig() {
-	if err := config.LoadConfigProvider("GITHUBINFO"); err != nil {
-		log.Fatalf("Error reading config file, %s", err)
-	}
-}
+// func initConfig() {
+// 	if err := config.LoadConfigProvider(appName); err != nil {
+// 		log.Fatalf("Error reading config file, %s", err)
+// 	}
+// }
 
 // init gets this thing started
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize()
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", config.Config().GetBool("verbose"), "verbose output")
-	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is config.yml)")
-	rootCmd.PersistentFlags().String("config", os.ExpandEnv("./.config.yml"), "config file (default is config.yml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is config.yml)")
+	//rootCmd.PersistentFlags().String("config", os.ExpandEnv("./.config.yml"), "config file (default is config.yml)")
 
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))

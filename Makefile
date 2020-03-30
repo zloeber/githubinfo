@@ -9,13 +9,13 @@ REPO ?= github.com/$(VENDOR)/$(APP)
 
 SRCS := $(shell find . -name '*.go')
 GO_VERSION := $(shell cat ./.tool-versions | grep golang | cut -f 2 -d " ")
-#VERSION := $(git describe --tags `git rev-list --tags --max-count=1`)
-VERSION := $(shell grep "const Version " pkg/version/version.go | sed -E 's/.*"(.+)"$$/\1/')
+VERSION := $(shell git describe --tags `git rev-list --tags --max-count=1`)
+#VERSION := $(shell grep "const Version " pkg/version/version.go | sed -E 's/.*"(.+)"$$/\1/')
 GIT_COMMIT := $(shell git rev-parse HEAD)
 RELEASE_VERSION ?= $(VERSION)-$(GIT_COMMIT)
 GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE := $(shell date '+%Y-%m-%d-%H:%M:%S')
-LDFLAGS := -X $(REPO)/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/version.BuildDate=${BUILD_DATE}
+LDFLAGS := -X $(REPO)/version.AppName=${APP} -X $(REPO)/pkg/version/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/pkg/version/version.BuildDate=${BUILD_DATE} -X $(REPO)/pkg/version/version.Version=${VERSION}
 LINTERS := \
 	golang.org/x/lint/golint \
 	github.com/kisielk/errcheck \

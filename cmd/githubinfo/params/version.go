@@ -12,9 +12,10 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number",
 	Long:  `Print the version number`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Application:", version.AppName)
+		fmt.Println("Version:", version.Version)
 		fmt.Println("Build Date:", version.BuildDate)
 		fmt.Println("Git Commit:", version.GitCommit)
-		fmt.Println("Version:", version.Version)
 		fmt.Println("Go Version:", version.GoVersion)
 		fmt.Println("OS / Arch:", version.OsArch)
 	},
