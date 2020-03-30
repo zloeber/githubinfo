@@ -2,6 +2,7 @@ package params
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/zloeber/githubinfo/pkg/version"
 )
@@ -12,12 +13,14 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number",
 	Long:  `Print the version number`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Application:", version.AppName)
 		fmt.Println("Version:", version.Version)
-		fmt.Println("Build Date:", version.BuildDate)
-		fmt.Println("Git Commit:", version.GitCommit)
-		fmt.Println("Go Version:", version.GoVersion)
-		fmt.Println("OS / Arch:", version.OsArch)
+		if verbose {
+			fmt.Println("Application:", version.AppName)
+			fmt.Println("Build Date:", version.BuildDate)
+			fmt.Println("Git Commit:", version.GitCommit)
+			fmt.Println("Go Version:", version.GoVersion)
+			fmt.Println("OS / Arch:", version.OsArch)
+		}
 	},
 }
 

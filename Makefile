@@ -15,7 +15,10 @@ GIT_COMMIT := $(shell git rev-parse HEAD)
 RELEASE_VERSION ?= $(VERSION)-$(GIT_COMMIT)
 GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE := $(shell date '+%Y-%m-%d-%H:%M:%S')
-LDFLAGS := -X $(REPO)/pkg/version/version.AppName=${APP} -X $(REPO)/pkg/version/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/pkg/version/version.BuildDate=${BUILD_DATE} -X $(REPO)/pkg/version/version.Version=${VERSION}
+LDFLAGS := -X $(REPO)/pkg/version.AppName=${APP} \
+		   -X $(REPO)/pkg/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} \
+		   -X $(REPO)/pkg/version.BuildDate=${BUILD_DATE} \
+		   -X $(REPO)/pkg/version.Version=${VERSION}
 LINTERS := \
 	golang.org/x/lint/golint \
 	github.com/kisielk/errcheck \
@@ -29,8 +32,10 @@ help: ## Help
 	@grep --no-filename -E '^[a-zA-Z_%/-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: build
-build: deps mod/tidy ## Compile the project.
-	go build -v -ldflags "$(LDFLAGS)" -o bin ./cmd/...
+build: deps mod/tidy ## Compile the project.binaries
+	go build -v \
+		-ldflags "$(LDFLAGS)" \
+		-o bin ./cmd/...
 
 .PHONY: docker/image
 docker/image: mod/tidy ## Build docker image

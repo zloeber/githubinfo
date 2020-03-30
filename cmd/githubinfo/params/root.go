@@ -2,7 +2,6 @@ package params
 
 import (
 	"fmt"
-//	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -19,7 +18,7 @@ var (
 	// App info
 	appName = "GITHUBINFO"
 	rootCmd       = &cobra.Command{
-		Use:   "githubinfo zloeber/githubinfo",
+		Use:   "githubinfo get zloeber/githubinfo",
 		Short: "Gather and return information about a github project via the github api without a token.",
 		Long: `Gather information about another github project without scraping the github api via
 		 curl and bash scripts.`,
