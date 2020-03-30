@@ -15,7 +15,7 @@ GIT_COMMIT := $(shell git rev-parse HEAD)
 RELEASE_VERSION ?= $(VERSION)-$(GIT_COMMIT)
 GIT_DIRTY := $(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE := $(shell date '+%Y-%m-%d-%H:%M:%S')
-LDFLAGS := -X $(REPO)/version.AppName=${APP} -X $(REPO)/pkg/version/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/pkg/version/version.BuildDate=${BUILD_DATE} -X $(REPO)/pkg/version/version.Version=${VERSION}
+LDFLAGS := -X $(REPO)/pkg/version/version.AppName=${APP} -X $(REPO)/pkg/version/version.GitCommit=${GIT_COMMIT}${GIT_DIRTY} -X $(REPO)/pkg/version/version.BuildDate=${BUILD_DATE} -X $(REPO)/pkg/version/version.Version=${VERSION}
 LINTERS := \
 	golang.org/x/lint/golint \
 	github.com/kisielk/errcheck \
